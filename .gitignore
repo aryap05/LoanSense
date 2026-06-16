@@ -1,0 +1,25 @@
+# Environments & Secrets
+.env
+backend/.env
+.venv/
+
+# Caches and builds
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+dist/
+
+# MLflow Tracking & Artifacts
+mlruns/
+backend/mlruns/
+
+# Large/Binary Data Files (Prevent Git leakage)
+*.parquet
+*.db
+*.csv
+*.pkl
+backend/ml/data/raw/
+backend/ml/data/processed/
+backend/ml/data/attacks/
+backend/ml/training/tmp_artifacts/

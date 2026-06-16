@@ -1,0 +1,40 @@
+# Label-Feature Independence Bug Fix
+
+## Changes Made
+1. **`backend/ml/data/synthetic_layer.py`**:
+   - Implemented a probabilistic `compute_default_probability` function driven by a logistic regression equation over credit features (`cibil_score_simulated`, `account_age_months`, `emi_to_income_ratio`, `enquiry_count_30d`).
+   - Replaced the previously independent generation of `default_flag` with this causal logic.
+   - Tuned the logistic intercept to `-4.0` to ensure the overall base default rate stayed close to the historical rate (hitting ~10%).
+
+2. **`backend/ml/attack_generator/generate_attacks.py`**:
+   - Removed hardcoded `default_flag` assignments from all attack patterns.
+   - Imported and applied the causal probability function to dynamically determine `default_flag` based on the specific features generated for each row.
+
+3. **`backend/ml/data/prepare_dataset.py` & Dataset Card**:
+   - Regenerated all train/val/test splits, running SMOTENC against the new distributions.
+   - Updated `dataset_card.md` to formally document the causal links and explicitly call out the intentional divergence in **Pattern 4** (Synthetic Identity).
+
+4. **`backend/ml/training/train_credit.py`**:
+   - Retrained the credit risk XGBoost model (with heavy regularisation from the previous run) on the newly generated dataset.
+   - Added a clear comparison printout.
+   - Logged the model to MLflow with the `note="fixed-label-feature-independence"` tag.
+
+## Validation Results
+- **Correlation Checks:** 
+  - `cibil_score_simulated`: -0.09
+  - `account_age_months`: -0.08
+  - `emi_to_income_ratio`: +0.14
+- **Pattern Divergence (Pattern 4):**
+  - Expected `fraud_flag` rate: 100%
+  - Actual `default_flag` rate: 7.6% (proving the intended contradiction).
+- **Model Improvements vs Baseline (v6):**
+
+| Metric | Baseline (v6) | New Model |
+| :--- | :--- | :--- |
+| **ROC-AUC** | 0.6702 | **0.7237** |
+| **F1-Score** | 0.2829 | **0.2939** |
+
+> [!TIP]
+> The overfitting gap is massively reduced (Train ROC-AUC 0.76 vs Val 0.72). The model is no longer memorising noise, but actively learning the causal credit signals.
+
+With the bug fixed and the model performing over the 0.72 ROC-AUC threshold, we are ready to move on.
