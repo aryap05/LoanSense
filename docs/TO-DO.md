@@ -497,7 +497,7 @@ Exit condition: MLflow run logged. Model registered. Attack detection rates prin
 
 ## Task 4: FastAPI Backend
 
-### Block 12: Database Setup
+### Block 12: Database Setup ✅ Completed
 
 What it does: Creates the PostgreSQL schema, runs Alembic migrations, and verifies all four tables are created correctly.
 
@@ -573,7 +573,7 @@ Exit condition: `alembic upgrade head` runs without errors. All four tables visi
 
 ---
 
-### Block 13: Model Loading & Serving Layer
+### Block 13: Model Loading & Serving Layer ✅ Completed
 
 What it does: Builds the module that loads all three models from MLflow registry at startup and exposes them as callable functions for the agent's tool calls.
 
@@ -626,7 +626,7 @@ Exit condition: `pytest tests/test_model_loading.py` passes. FastAPI startup log
 
 ---
 
-### Block 14: FastAPI Routes
+### Block 14: FastAPI Routes ✅ Completed
 
 What it does: Implements all four API endpoints with Pydantic validation, input sanitization, and proper error handling.
 
@@ -730,6 +730,7 @@ Exit condition: All three tools defined with correct Gemini schema. `execute_too
 ### Block 16: Agent System Prompt & Orchestrator
 
 What it does: Implements the full agent reasoning loop — system prompt, tool call handling, verdict extraction, and the core rule that contradiction_score > 0.6 never approves.
+*(Note: Must replace the mock Agent Verdict currently implemented in the POST /assess route.)*
 
 Prompt for Claude Code:
 ```
@@ -1115,6 +1116,7 @@ Exit condition: `pytest tests/test_drift.py` passes. GET /api/v1/drift returns v
 ### Block 24: Dockerization & Deployment
 
 What it does: Dockerizes the backend, deploys to Railway or Render with PostgreSQL, and confirms the hosted demo is live.
+*(Note: Must update FastAPI CORS configuration in app/main.py, currently hardcoded to localhost, to allow the production frontend domain.)*
 
 Prompt for Claude Code:
 ```

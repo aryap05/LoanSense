@@ -238,3 +238,26 @@ backend\.venv\Scripts\pytest backend\tests\test_contradiction.py -v
 
 - **Performance Results**:
   - The system drastically exceeded the 3-out-of-4 target. It successfully detected all four attack patterns at >90% accuracy: `stolen_pan_fabricated_employment` (97.8%), `fragmented_bureau_footprint` (95.6%), `upi_velocity_spike` (92.4%), and `synthetic_identity_clean` (90.8%).
+
+**Block 12, 13, 14: FastAPI Backend, Database Setup, and Model Serving**
+```powershell
+# Initialize Alembic
+.\backend\.venv\Scripts\alembic init alembic
+
+# Recreated schemas due to PSQL 15 default schema security rule on public schema
+$env:PGPASSWORD="loansense123"; psql -U loansense_user -d loansense -c "CREATE SCHEMA IF NOT EXISTS loansense_user AUTHORIZATION loansense_user;"
+
+# Run autogenerate migration
+.\backend\.venv\Scripts\alembic revision --autogenerate -m "initial schema"
+
+# Upgrade database to head
+.\backend\.venv\Scripts\alembic upgrade head
+
+# Run the complete test suite including new DB, endpoints, and MLflow loader tests
+.\backend\.venv\Scripts\pytest backend\tests\ -v
+# Output: 15 passed, 3 warnings in 4.60s
+
+# Added and ran the missing integration test for full assessment flow (POST /assess -> GET /verdicts -> GET /audit)
+.\backend\.venv\Scripts\pytest backend\tests\test_endpoints.py -v
+# Output: 3 passed, 3 warnings in 3.27s
+```
