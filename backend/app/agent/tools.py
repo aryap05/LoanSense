@@ -25,14 +25,38 @@ def execute_tool_call(tool_name: str, applicant_id: str, db: Session) -> dict:
         
         # 3. Route to model
         result = None
+        model_name = ""
+        score = None
+        signals = None
+        
         if tool_name == "get_credit_risk_score":
             result = model_registry.get_credit_score(raw_features)
+            model_name = "credit-risk-scorer"
+            score = result.get("score")
+            signals = {"risk_band": result.get("risk_band")}
         elif tool_name == "get_fraud_signals":
             result = model_registry.get_fraud_signals(raw_features)
+            model_name = "fraud-signal-detector"
+            score = result.get("fraud_probability")
+            signals = {"fraud_signals": result.get("fraud_signals"), "is_fraud": result.get("is_fraud")}
         elif tool_name == "get_contradiction_score":
             result = model_registry.get_contradiction_score(raw_features)
+            model_name = "contradiction-detector"
+            score = result.get("contradiction_score")
+            signals = {"anomaly_score": result.get("anomaly_score"), "rule_flags": result.get("rule_flags")}
         else:
             return {"error": f"Unknown tool name: {tool_name}"}
+            
+        # 3.5 Save Model Output for Drift Detection
+        if model_name:
+            crud.create_model_output(
+                db=db,
+                applicant_id=app_uuid,
+                model_name=model_name,
+                model_version=result.get("version", "unknown"),
+                score=score,
+                signals=signals
+            )
             
         # 4. Audit Log (Success)
         crud.create_audit_log(

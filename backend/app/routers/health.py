@@ -11,7 +11,13 @@ def health_check():
         for model_name, info in model_registry.models.items()
     }
     
+    from . import drift
+    
     return {
         "status": "healthy",
-        "models": models_status
+        "models": {
+            "loaded_models": sum(1 for status in models_status.values() if status == "loaded"),
+            "distribution_drift_detected": drift.last_drift_alert,
+            "details": models_status
+        }
     }

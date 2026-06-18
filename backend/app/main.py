@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import health, assess, verdicts, audit
+from .routers import health, assess, verdicts, audit, drift
 from .models.loader import model_registry
 
 app = FastAPI(
@@ -42,3 +42,4 @@ app.include_router(health.router, prefix="/api/v1")
 app.include_router(assess.router, prefix="/api/v1")
 app.include_router(verdicts.router, prefix="/api/v1")
 app.include_router(audit.router, prefix="/api/v1")
+app.include_router(drift.router, prefix="/api/v1")
