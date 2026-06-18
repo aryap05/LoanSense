@@ -7,19 +7,26 @@ export default function Dashboard() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [recentAssessments, setRecentAssessments] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(true);
 
   useEffect(() => {
-    const fetchHealth = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/health');
-        setHealth(response.data);
+        const [healthRes, recentRes] = await Promise.all([
+          api.get('/health'),
+          api.get('/verdicts/recent')
+        ]);
+        setHealth(healthRes.data);
+        setRecentAssessments(recentRes.data);
       } catch (err) {
         setError('Unable to connect to LoanSense backend.');
       } finally {
         setLoading(false);
+        setLoadingRecent(false);
       }
     };
-    fetchHealth();
+    fetchData();
   }, []);
 
   const stats = [
@@ -80,6 +87,73 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* Recent Assessments Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+          <h3 className="text-lg font-medium leading-6 text-gray-900 flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-gray-500" />
+            Recent Assessments
+          </h3>
+          <Link to="/assess" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+            View all
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {loadingRecent ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">Loading...</td>
+                </tr>
+              ) : recentAssessments.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No recent assessments found.</td>
+                </tr>
+              ) : (
+                recentAssessments.map((assessment) => (
+                  <tr key={assessment.applicant_id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="text-sm font-medium text-gray-900">{assessment.name}</div>
+                      </div>
+                      <div className="text-xs text-gray-500 font-mono mt-1">ID: {assessment.applicant_id.substring(0, 8)}...</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        assessment.decision === 'APPROVE' ? 'bg-green-100 text-green-800' :
+                        assessment.decision === 'FLAG_FOR_REVIEW' ? 'bg-amber-100 text-amber-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {assessment.decision.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(assessment.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link to={`/verdict/${assessment.applicant_id}`} className="text-blue-600 hover:text-blue-900 mr-4">
+                        Verdict
+                      </Link>
+                      <Link to="/audit" state={{ applicantId: assessment.applicant_id }} className="text-gray-600 hover:text-gray-900">
+                        Audit
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* System Status Panel */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-5 border-b border-gray-200">
@@ -106,8 +180,8 @@ export default function Dashboard() {
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">API Status</dt>
                 <dd className="mt-1 text-sm text-gray-900 flex items-center">
-                  <div className={`h-2.5 w-2.5 rounded-full mr-2 ${health.status === 'ok' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  {health.status === 'ok' ? 'Healthy' : 'Degraded'}
+                  <div className={`h-2.5 w-2.5 rounded-full mr-2 ${health.status === 'healthy' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  {health.status === 'healthy' ? 'Healthy' : 'Degraded'}
                 </dd>
               </div>
               <div className="sm:col-span-1">

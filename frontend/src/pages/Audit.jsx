@@ -1,25 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Search, Clock, FileSearch, Shield, Server, Bot, AlertCircle } from 'lucide-react';
 import api from '../api/client';
 
 export default function Audit() {
-  const [applicantId, setApplicantId] = useState('');
+  const location = useLocation();
+  const [applicantId, setApplicantId] = useState(location.state?.applicantId || '');
   const [auditLog, setAuditLog] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!applicantId.trim()) return;
+  useEffect(() => {
+    if (location.state?.applicantId) {
+      // Create a synthetic event or just call the logic
+      executeSearch(location.state.applicantId);
+    }
+  }, [location.state]);
 
+  const executeSearch = async (id) => {
+    if (!id.trim()) return;
     setLoading(true);
     setError(null);
     setSearched(true);
     setAuditLog(null);
 
     try {
-      const response = await api.get(`/audit/${applicantId.trim()}`);
+      const response = await api.get(`/audit/${id.trim()}`);
       setAuditLog(response.data.audit_trail);
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -30,6 +37,11 @@ export default function Audit() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    executeSearch(applicantId);
   };
 
   const getEventIcon = (eventType) => {

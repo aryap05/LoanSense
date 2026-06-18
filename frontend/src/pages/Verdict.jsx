@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShieldCheck, ShieldAlert, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, XCircle, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
 import api from '../api/client';
 
 export default function Verdict() {
@@ -16,7 +16,7 @@ export default function Verdict() {
       setError(null);
       setNotFound(false);
       
-      const response = await api.get(`/applicants/${applicantId}`);
+      const response = await api.get(`/verdicts/${applicantId}`);
       setData(response.data);
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -191,7 +191,7 @@ export default function Verdict() {
       </div>
       
       <div className="flex justify-end pt-4">
-        <Link to="/audit" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+        <Link to="/audit" state={{ applicantId }} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
           View Full Audit Log &rarr;
         </Link>
       </div>

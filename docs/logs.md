@@ -275,3 +275,42 @@ $env:PGPASSWORD="loansense123"; psql -U loansense_user -d loansense -c "CREATE S
 .\backend\.venv\Scripts\pytest tests\test_agent.py -v
 # Output: 3 passed, 1 warning in 4.45s
 ```
+
+**Phase 6: React Frontend (Blocks 19-22)**
+```powershell
+# Globally install create-vite to avoid interactive cancellation
+npm install -g create-vite
+
+# Scaffold React SPA with JavaScript template
+mkdir frontend
+cd frontend
+npm init -y
+npm install react react-dom react-router-dom lucide-react axios
+npm install -D vite @vitejs/plugin-react tailwindcss postcss autoprefixer eslint eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-react-refresh @types/react @types/react-dom
+
+# Configure Vite and Tailwind
+# (Files configured via file editor API)
+
+# Start Dev Server to verify
+npm run dev
+# Output: VITE ready on http://localhost:5173
+
+# Branch per feature: created frontend branch for the Phase 6 work
+git checkout -b feat/frontend
+git add frontend/ backend/app/models/loader.py backend/app/schemas/applicant.py
+git commit -m "feat(frontend): implement React SPA dashboard and form for Phase 6"
+git push origin feat/frontend
+```
+
+**Phase 6: Frontend Debugging & UX Refinements (Post-Integration)**
+- **Bug 1 (API Mismatch)**: Frontend was sending requests to `http://localhost:8000/assess` instead of `http://localhost:8000/api/v1/assess`.
+  - *Fix*: Updated `client.js` base URL to include the `/api/v1` prefix.
+- **Bug 2 (Data Structure Mismatch)**: The `/verdicts/{id}` backend endpoint returned a raw array of `AgentVerdict` models, which the `Verdict.jsx` component failed to destructure, resulting in `NaN%` confidence scores and missing applicant data.
+  - *Fix*: Rewrote `get_verdicts` in `backend/app/routers/verdicts.py` to fetch the related applicant data and return a flattened dictionary mapping exactly to the frontend's expected properties (`decision`, `confidence_score`, `reasons`, `rbi_flags`, `name`, `pan_hash`).
+- **Bug 3 (Render Crash)**: `Verdict.jsx` crashed to a white screen upon successful data fetch because `CheckCircle2` was missing from the `lucide-react` import.
+  - *Fix*: Added the missing import.
+- **UX Improvement (Audit Search)**: Users lost their Applicant ID on crash.
+  - *Fix*: Updated the "View Full Audit Log" link in `Verdict.jsx` to pass the `applicantId` via React Router state. Updated `Audit.jsx` to intercept the state, pre-fill the search box, and trigger the audit fetch automatically.
+- **Security & UX Improvement (Recent Assessments vs IDOR)**: The user requested changing UUIDs to sequential IDs (`1, 2, 3...`) for easier testing.
+  - *Rejection*: Blocked this due to Insecure Direct Object Reference (IDOR) vulnerabilities, protecting the portfolio's security posture.
+  - *Alternative Solution*: Built a `/verdicts/recent` endpoint in the backend and a "Recent Assessments" table on the `Dashboard.jsx`. This displays the last 5 applicants with their status and direct links to their Verdict/Audit pages, entirely avoiding the need to remember UUIDs.

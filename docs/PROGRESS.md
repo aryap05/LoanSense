@@ -52,7 +52,7 @@ loansense/
 | Phase 3 — FastAPI backend serving all three models | ✅ Complete |
 | Phase 4 — Agent reasoning layer (Groq + tool calls) | ✅ Complete |
 | Phase 5 — pytest suite (all contradiction cases passing) | ✅ Complete |
-| Phase 6 — React frontend (all four pages connected) | ⬜ Not started |
+| Phase 6 — React frontend (all four pages connected) | ✅ Complete |
 | Phase 7 — MLOps (drift detection live) | ⬜ Not started |
 | Phase 8 — Hosted deployment (Railway/Render) | ⬜ Not started |
 | Phase 9 — README system design doc + demo video | ⬜ Not started |
@@ -60,6 +60,29 @@ loansense/
 ---
 
 ## Change Log
+
+## 2026-06-18 — Phase 6 Session Summary
+
+### Completed
+- **Scaffolded React Frontend**: Initialised a clean React + Vite SPA using vanilla JavaScript. Configured Tailwind CSS, PostCSS, and React Router.
+- **Form & PAN Security (Block 20)**: Built `Assess.jsx` with full schema mapping. Implemented real-time PAN masking and Web Crypto API SHA-256 hashing on blur/submit to guarantee the raw PAN is never stored in React state.
+- **Robust Error Handling**: Wired the frontend to gracefully catch `422 Unprocessable Entity` responses and display inline field-level validation errors.
+- **Pages Connected (Blocks 21 & 22)**: Built the `Verdict.jsx` UI with RBI compliance flags, contradiction scores, and color-coded decisions. Built `Audit.jsx` for tracking immutable JSONB logs, and `Dashboard.jsx` for monitoring system stats and drift detection.
+- **UX & Security Refinements**: 
+  - Fixed API connection paths (`/api/v1` prefix) and CORS matching.
+  - Implemented a backend `/verdicts/recent` endpoint and added a "Recent Assessments" table to the Dashboard. This avoids IDOR vulnerabilities (by keeping UUIDs) while making testing and navigation seamless.
+  - Fixed rendering crash in `Verdict.jsx` (missing Lucide icon) and passed `applicantId` via router state to auto-fill the Audit page search.
+
+### In Progress
+- Transitioning to Phase 7: MLOps & Drift Detection.
+
+### Next Session
+- Implement active drift detection loops and monitoring in the backend.
+
+### Blockers
+- None.
+
+---
 
 ## 2026-06-18 — Session Summary
 
