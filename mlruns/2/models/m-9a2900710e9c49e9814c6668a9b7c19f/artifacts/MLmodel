@@ -1,0 +1,23 @@
+artifact_path: file:D:/LoanSense/mlruns/2/models/m-9a2900710e9c49e9814c6668a9b7c19f/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+mlflow_version: 3.13.0
+model_id: m-9a2900710e9c49e9814c6668a9b7c19f
+model_size_bytes: 595766
+model_uuid: m-9a2900710e9c49e9814c6668a9b7c19f
+prompts: null
+run_id: b10e7faa35a1467883bc5b893163cc78
+utc_time_created: '2026-06-15 16:44:41.279155'

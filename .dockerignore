@@ -1,0 +1,32 @@
+# Ignore Git and IDE metadata
+.git/
+.vscode/
+.idea/
+
+# Ignore virtual environments
+.venv/
+venv/
+env/
+backend/.venv/
+
+# Ignore caches and temporary files
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/.pytest_cache/
+frontend/.pytest_cache/
+
+# Ignore sensitive env files
+.env
+backend/.env
+frontend/.env
+*.env*
+
+# Ignore frontend build files and dependencies
+frontend/node_modules/
+frontend/dist/
+
+# Ignore raw data that is not needed in the container
+backend/ml/data/raw/
+backend/ml/data/processed/
+backend/ml/data/attacks/
