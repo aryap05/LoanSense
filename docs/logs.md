@@ -261,3 +261,17 @@ $env:PGPASSWORD="loansense123"; psql -U loansense_user -d loansense -c "CREATE S
 .\backend\.venv\Scripts\pytest backend\tests\test_endpoints.py -v
 # Output: 3 passed, 3 warnings in 3.27s
 ```
+
+**Block 15: Agent Tool Definitions**
+```powershell
+# Executed unit tests for Agent Tools (checking model fallback routing and error handling)
+.\backend\.venv\Scripts\pytest backend\tests\test_agent_tools.py -v
+# Output: 4 passed, 1 warning in 4.66s
+```
+
+**Block 16: Agent System Prompt & Orchestrator**
+```powershell
+# Executed unit tests for the Agent Orchestrator (validating Tool loop, JSON parsing, and Contradiction Override)
+.\backend\.venv\Scripts\pytest tests\test_agent.py -v
+# Output: 3 passed, 1 warning in 4.45s
+```

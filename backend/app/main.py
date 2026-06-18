@@ -9,11 +9,18 @@ app = FastAPI(
     version="1.0.0"
 )
 
+import os
+
 # CORS config
 origins = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
+# Add production frontend URL from environment if it exists
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,

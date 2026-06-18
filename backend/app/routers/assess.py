@@ -3,19 +3,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..db import database, crud
 from ..schemas.applicant import ApplicantInput
-from ..models.loader import model_registry
+from ..agent.orchestrator import AgentOrchestrator
 
 router = APIRouter(tags=["Assess"])
 
 @router.post("/assess")
-def assess_applicant(applicant: ApplicantInput, db: Session = Depends(database.get_db)):
+async def assess_applicant(applicant: ApplicantInput, db: Session = Depends(database.get_db)):
     # 1. Hash PAN
     pan_hash = hashlib.sha256(applicant.pan_number.encode()).hexdigest()
     
-    # 2. Log assessment started
-    # Note: we need applicant UUID. Let's create applicant first.
+    # 2. Log assessment started and create applicant
     app_data = applicant.model_dump(exclude={'pan_number'})
     db_applicant = crud.create_applicant(db, pan_hash, app_data)
+    app_id_str = str(db_applicant.id)
     
     crud.create_audit_log(
         db, 
@@ -24,47 +24,33 @@ def assess_applicant(applicant: ApplicantInput, db: Session = Depends(database.g
         {"message": "Received application and sanitized inputs."}
     )
     
-    # 3. Model Scoring
-    # Credit Risk
-    try:
-        credit_result = model_registry.get_credit_score(app_data)
-        crud.create_model_output(
-            db, db_applicant.id, "credit-risk-scorer", credit_result["version"], score=credit_result["score"]
-        )
-    except Exception as e:
-        credit_result = {"error": str(e)}
+    # 3. Format applicant context for the Agent
+    applicant_context = f"""
+    New loan application:
+    Applicant ID: {app_id_str}
+    Income: {applicant.income}
+    Loan Amount: {applicant.loan_amount}
+    Loan Term (Months): {applicant.loan_term_months}
+    Purpose: {applicant.purpose}
+    Employment Type: {applicant.employment_type}
+    CIBIL Score (declared): {applicant.cibil_score}
+    Existing EMI: {applicant.existing_emi}
+    Notes: {applicant.applicant_notes}
+    """
 
-    # Fraud
-    try:
-        fraud_result = model_registry.get_fraud_signals(app_data)
-        crud.create_model_output(
-            db, db_applicant.id, "fraud-signal-detector", fraud_result["version"], signals={"is_fraud": fraud_result["is_fraud"]}
-        )
-    except Exception as e:
-        fraud_result = {"error": str(e)}
-        
-    # Contradiction
-    try:
-        contra_result = model_registry.get_contradiction_score(app_data)
-        crud.create_model_output(
-            db, db_applicant.id, "contradiction-detector", contra_result["version"], score=contra_result["contradiction_score"]
-        )
-    except Exception as e:
-        contra_result = {"error": str(e)}
+    # 4. Invoke Agent Orchestrator
+    orchestrator = AgentOrchestrator(db)
+    verdict_json = await orchestrator.assess(app_id_str, applicant_context)
 
-    crud.create_audit_log(
-        db, db_applicant.id, "models_executed", 
-        {"credit": credit_result, "fraud": fraud_result, "contradiction": contra_result}
-    )
-
-    # 4. Agent Verdict (Mock for now since Block 15 Agent is next)
+    # 5. Save the Agent's Verdict to the DB
     verdict = crud.create_verdict(
         db, 
         db_applicant.id, 
-        decision="MANUAL_REVIEW" if fraud_result.get("is_fraud") else "APPROVED",
-        confidence=0.85,
-        reason="Agent reasoning not implemented yet. Base scores applied.",
-        risk_signals={"fraud": fraud_result.get("is_fraud", False)}
+        decision=verdict_json.get("decision", "FLAG_FOR_REVIEW"),
+        confidence=verdict_json.get("confidence", 0.0),
+        reason=verdict_json.get("primary_reason", "No reason provided."),
+        risk_signals=verdict_json.get("risk_signals", {}),
+        rbi_compliance=verdict_json.get("rbi_mapping", {})
     )
 
     crud.create_audit_log(db, db_applicant.id, "verdict_issued", {"decision": verdict.decision})

@@ -37,7 +37,7 @@ class ApplicantInput(BaseModel):
     loan_term_months: int = Field(..., gt=0, le=360, description="Loan term in months")
     
     # Credit History
-    cibil_score: int = Field(..., ge=300, le=900, description="CIBIL Score")
+    cibil_score: int = Field(ge=-1, le=900, description="Applicant's credit score (0 or -1 if new to credit)")
     existing_emi: float = Field(default=0.0, ge=0, description="Existing EMI obligations")
     
     # Demographics / Metadata

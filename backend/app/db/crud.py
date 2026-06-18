@@ -10,6 +10,9 @@ def create_applicant(db: Session, hashed_pan: str, raw_features: Dict[str, Any])
     db.refresh(db_applicant)
     return db_applicant
 
+def get_applicant_by_id(db: Session, applicant_id: UUID) -> Optional[models.Applicant]:
+    return db.query(models.Applicant).filter(models.Applicant.id == applicant_id).first()
+
 def create_model_output(
     db: Session, 
     applicant_id: UUID, 

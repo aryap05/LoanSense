@@ -689,7 +689,7 @@ Exit condition: `pytest tests/test_endpoints.py` passes. `GET /api/v1/health` re
 
 ## Task 5: Agent Reasoning Layer
 
-### Block 15: Agent Tool Definitions
+### Block 15: Agent Tool Definitions ✅ Completed
 
 What it does: Defines the three Gemini function-calling tool schemas that the agent uses to query the ML models.
 
@@ -727,7 +727,7 @@ Exit condition: All three tools defined with correct Gemini schema. `execute_too
 
 ---
 
-### Block 16: Agent System Prompt & Orchestrator
+### Block 16: Agent System Prompt & Orchestrator ✅ Completed
 
 What it does: Implements the full agent reasoning loop — system prompt, tool call handling, verdict extraction, and the core rule that contradiction_score > 0.6 never approves.
 *(Note: Must replace the mock Agent Verdict currently implemented in the POST /assess route.)*
