@@ -29,6 +29,7 @@ def sanitize_text(text: str) -> str:
 
 class ApplicantInput(BaseModel):
     # Core identifying
+    name: str = Field(default="Unknown", min_length=2, max_length=100, description="Applicant full name")
     pan_number: str = Field(..., description="PAN Card number, will be hashed.")
     
     # Financial features
@@ -37,8 +38,14 @@ class ApplicantInput(BaseModel):
     loan_term_months: int = Field(..., gt=0, le=360, description="Loan term in months")
     
     # Credit History
-    cibil_score: int = Field(ge=-1, le=900, description="Applicant's credit score (0 or -1 if new to credit)")
+    cibil_score: int = Field(ge=0, le=900, description="Applicant's credit score (0 if new to credit)")
     existing_emi: float = Field(default=0.0, ge=0, description="Existing EMI obligations")
+    account_age_months: int = Field(default=0, ge=0, description="Account age in months")
+    enquiry_count_30d: int = Field(default=0, ge=0, description="Hard credit enquiries in last 30 days")
+    
+    # Fraud signals / Transaction velocity
+    upi_velocity_percentile: float = Field(default=50.0, ge=0.0, le=100.0, description="UPI velocity percentile rank")
+    transaction_velocity_30d: float = Field(default=0.0, ge=0.0, description="Transaction velocity in last 30 days")
     
     # Demographics / Metadata
     employment_type: str = Field(..., description="E.g., Salaried, Self-Employed")
