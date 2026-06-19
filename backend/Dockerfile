@@ -21,7 +21,7 @@ COPY backend/ .
 COPY mlruns/1/ ./mlruns/1/
 COPY mlruns/2/ ./mlruns/2/
 COPY mlruns/3/ ./mlruns/3/
-COPY mlruns/mlflow.db ./mlruns/mlflow.db
+COPY backend/mlruns/mlflow.db ./mlruns/mlflow.db
 
 # Run the patch script to rewrite absolute Windows paths in MLflow SQLite database
 RUN python scripts/patch_mlflow_paths.py
