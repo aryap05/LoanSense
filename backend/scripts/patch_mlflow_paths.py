@@ -32,6 +32,12 @@ def patch_mlflow_db():
             # Update experiments
             cur.execute("UPDATE experiments SET artifact_location = REPLACE(artifact_location, ?, ?)", (old_path, new_path))
             
+            # Update model_versions (important for registry)
+            cur.execute("UPDATE model_versions SET storage_location = REPLACE(storage_location, ?, ?)", (old_path, new_path))
+            
+            # Update logged_models (important for MLflow 2.x backend)
+            cur.execute("UPDATE logged_models SET source = REPLACE(source, ?, ?)", (old_path, new_path))
+            
         conn.commit()
         
         # Verify it worked
