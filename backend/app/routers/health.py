@@ -7,7 +7,7 @@ router = APIRouter(tags=["Health"])
 def health_check():
     # Check DB could be added here, but for now just app & models
     models_status = {
-        model_name: "loaded" if info and info.get("model") else "not_loaded"
+        model_name: "loaded" if info and info.get("model") else (info.get("error") if info and info.get("error") else "not_loaded")
         for model_name, info in model_registry.models.items()
     }
     

@@ -67,8 +67,10 @@ class ModelRegistry:
                     "version": version
                 }
             except Exception as e:
-                print(f"Warning: Failed to load {model_name}: {e}")
-                self.models[model_name] = None
+                import traceback
+                error_msg = f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
+                print(f"Warning: Failed to load {model_name}: {error_msg}")
+                self.models[model_name] = {"model": None, "error": error_msg}
                 
     def _align_features(self, applicant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Maps and derives features from ApplicantInput format to the format required by the ML models."""
