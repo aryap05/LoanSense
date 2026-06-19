@@ -72,7 +72,7 @@ export default function Dashboard() {
             <FileText className="h-5 w-5 mr-2 text-gray-500" />
             Recent Assessments
           </h3>
-          <Link to="/assess" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/assessments" className="text-sm font-medium text-blue-600 hover:text-blue-500">
             View all
           </Link>
         </div>

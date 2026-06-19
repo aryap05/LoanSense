@@ -6,6 +6,7 @@ export default function Layout() {
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
+    { name: 'All Assessments', href: '/assessments', icon: FileText },
     { name: 'New Assessment', href: '/assess', icon: FileText },
     { name: 'Audit Logs', href: '/audit', icon: Activity },
   ];
