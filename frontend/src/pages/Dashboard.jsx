@@ -29,12 +29,6 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  const stats = [
-    { name: 'Total Processed', value: '1,234', icon: Users, color: 'text-blue-500', bg: 'bg-blue-100' },
-    { name: 'Avg Turnaround', value: '1.2s', icon: Activity, color: 'text-green-500', bg: 'bg-green-100' },
-    { name: 'Auto-Approved', value: '68%', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-100' },
-    { name: 'Flagged / Rejected', value: '32%', icon: ShieldAlert, color: 'text-amber-500', bg: 'bg-amber-100' },
-  ];
 
   return (
     <div className="space-y-6">
@@ -70,22 +64,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((item) => (
-          <div key={item.name} className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6 border border-gray-100">
-            <dt>
-              <div className={`absolute rounded-md ${item.bg} p-3`}>
-                <item.icon className={`h-6 w-6 ${item.color}`} aria-hidden="true" />
-              </div>
-              <p className="ml-16 truncate text-sm font-medium text-gray-500">{item.name}</p>
-            </dt>
-            <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-              <p className="text-2xl font-semibold text-gray-900">{item.value}</p>
-            </dd>
-          </div>
-        ))}
-      </div>
 
       {/* Recent Assessments Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

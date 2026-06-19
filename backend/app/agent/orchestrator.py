@@ -163,6 +163,11 @@ class AgentOrchestrator:
                     }
                 )
                 
+            # 5. Inject contradiction_score into risk_signals so it gets saved to the DB
+            if "risk_signals" not in verdict_json:
+                verdict_json["risk_signals"] = {}
+            verdict_json["risk_signals"]["contradiction_score"] = contradiction_score
+
             return verdict_json
             
         except Exception as e:
