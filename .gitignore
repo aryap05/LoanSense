@@ -12,11 +12,13 @@ dist/
 
 # MLflow Tracking & Artifacts
 mlruns/
+!backend/mlruns/mlflow.db
 backend/mlruns/
 
 # Large/Binary Data Files (Prevent Git leakage)
 *.parquet
 *.db
+!mlflow.db
 *.csv
 *.pkl
 backend/ml/data/raw/
