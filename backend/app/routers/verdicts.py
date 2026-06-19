@@ -38,7 +38,7 @@ def get_verdicts(applicant_id: UUID, db: Session = Depends(database.get_db)):
         "decision": latest_verdict.decision,
         "confidence_score": latest_verdict.confidence,
         "reasons": [latest_verdict.reason] if latest_verdict.reason else [],
-        "rbi_flags": list(latest_verdict.rbi_compliance.keys()) if latest_verdict.rbi_compliance else [],
+        "rbi_flags": list(latest_verdict.rbi_compliance.values()) if latest_verdict.rbi_compliance else [],
         "contradiction_detected": latest_verdict.risk_signals.get("contradiction_score", 0) > 0.5 if latest_verdict.risk_signals else False,
         "contradiction_score": latest_verdict.risk_signals.get("contradiction_score", 0) if latest_verdict.risk_signals else 0.0,
         "name": applicant.raw_features.get("name", "Unknown"),
