@@ -3,10 +3,10 @@ flavors:
   python_function:
     artifacts:
       isolation_forest:
-        path: artifacts\isolation_forest.pkl
+        path: artifacts/isolation_forest.pkl
         uri: D:\LoanSense\backend\ml\training\tmp_artifacts\isolation_forest.pkl
       logistic_regression:
-        path: artifacts\logistic_regression.pkl
+        path: artifacts/logistic_regression.pkl
         uri: D:\LoanSense\backend\ml\training\tmp_artifacts\logistic_regression.pkl
     cloudpickle_version: 3.1.2
     code: null
