@@ -29,16 +29,9 @@ warnings.filterwarnings('ignore')
 class ContradictionDetectorPyFunc(mlflow.pyfunc.PythonModel):
     def load_context(self, context):
         import joblib
-        import sys
-        import os
-        from pathlib import Path
         
-        # Ensure the backend directory is in the path for importing rules
-        backend_dir = Path(__file__).parent.parent.parent.resolve()
-        if str(backend_dir) not in sys.path:
-            sys.path.append(str(backend_dir))
-            
         from ml.training.contradiction.rules import ContradictionRuleEngine
+        
         
         self.isolation_forest = joblib.load(context.artifacts["isolation_forest"])
         self.logistic_regression = joblib.load(context.artifacts["logistic_regression"])

@@ -1,0 +1,26 @@
+artifact_path: file:D:/LoanSense/mlruns/3/models/m-9051596383334209aa5049784df022ec/artifacts
+flavors:
+  python_function:
+    artifacts:
+      isolation_forest:
+        path: artifacts\isolation_forest.pkl
+        uri: D:\LoanSense\backend\ml\training\tmp_artifacts\isolation_forest.pkl
+      logistic_regression:
+        path: artifacts\logistic_regression.pkl
+        uri: D:\LoanSense\backend\ml\training\tmp_artifacts\logistic_regression.pkl
+    cloudpickle_version: 3.1.2
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.13.7
+    streamable: false
+mlflow_version: 3.13.0
+model_id: m-9051596383334209aa5049784df022ec
+model_size_bytes: 1591590
+model_uuid: m-9051596383334209aa5049784df022ec
+prompts: null
+run_id: fb23f32ef052405189581fda1109c6be
+utc_time_created: '2026-06-19 15:25:30.992414'
