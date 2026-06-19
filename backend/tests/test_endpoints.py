@@ -77,9 +77,8 @@ def test_full_assessment_flow(db_session):
             v_response = client.get(f"/api/v1/verdicts/{applicant_id}")
             assert v_response.status_code == 200, v_response.text
             v_data = v_response.json()
-            assert isinstance(v_data, list)
-            assert len(v_data) > 0
-            assert v_data[0]["applicant_id"] == applicant_id
+            assert isinstance(v_data, dict)
+            assert v_data["decision"] == "APPROVE"
             
             # 3. GET /audit/{id}
             a_response = client.get(f"/api/v1/audit/{applicant_id}")

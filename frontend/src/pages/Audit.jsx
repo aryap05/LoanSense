@@ -27,7 +27,7 @@ export default function Audit() {
 
     try {
       const response = await api.get(`/audit/${id.trim()}`);
-      setAuditLog(response.data.audit_trail);
+      setAuditLog(response.data);
     } catch (err) {
       if (err.response && err.response.status === 404) {
         setAuditLog([]);
@@ -131,11 +131,11 @@ export default function Audit() {
                         <div>
                           <p className="text-sm text-gray-900 font-medium">{event.event_type.replace(/_/g, ' ')}</p>
                           <div className="mt-1 text-sm text-gray-500 bg-gray-50 rounded-md p-3 border border-gray-100 font-mono text-xs overflow-x-auto">
-                            <pre>{JSON.stringify(event.details, null, 2)}</pre>
+                            <pre>{JSON.stringify(event.event_data, null, 2)}</pre>
                           </div>
                         </div>
                         <div className="whitespace-nowrap text-right text-xs text-gray-500">
-                          {new Date(event.timestamp).toLocaleString()}
+                          {new Date(event.created_at).toLocaleString()}
                         </div>
                       </div>
                     </div>

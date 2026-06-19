@@ -192,7 +192,7 @@ export default function Dashboard() {
               </div>
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">LLM Provider</dt>
-                <dd className="mt-1 text-sm text-gray-900">Groq (Mixtral-8x7b)</dd>
+                <dd className="mt-1 text-sm text-gray-900">Groq (Llama-3.3-70b)</dd>
               </div>
             </dl>
           )}
